@@ -29,7 +29,7 @@ class ResultScene: SKScene {
         self.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         
         var result = SKLabelNode(fontNamed: "Chalkduster")
-        result.text = "You Score: " + scoreStr!
+        result.text = "You Score is: " + scoreStr!
         result.name = "You Lose!"
         result.fontSize = 50
         result.fontColor = SKColor.blackColor()
