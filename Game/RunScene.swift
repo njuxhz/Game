@@ -47,8 +47,10 @@ class RunScene: SKScene {
     var hero: SKSpriteNode!
     var result: SKLabelNode!
     var obstacles: NSMutableArray = []
+    var goldens: NSMutableArray = []
     var lose = false
     var startDate: NSDate!
+    var addScore = 0
     
     private func showPic(picName: String, base: CGFloat) {
         let Pic = SKTexture(imageNamed: picName)
@@ -71,6 +73,7 @@ class RunScene: SKScene {
     func paveBackground(){
         lose = false
         startDate = NSDate()
+        addScore = 0
         
         self.physicsWorld.gravity = CGVectorMake(0.0, -5.0)
         self.backgroundColor = UIColor(red: 113.0/255.0, green: 197.0/255.0, blue: 207.0/255.0, alpha: 1.0)
@@ -132,6 +135,10 @@ class RunScene: SKScene {
         var addObs = SKAction.runBlock({self.addObstacle()})
         var waitForNext = SKAction.waitForDuration(Double(4))
         self.runAction(SKAction.repeatActionForever(SKAction.sequence([addObs, waitForNext])))
+        
+        var addGoldens = SKAction.runBlock({self.addGolden()})
+        var waitForNextGoldens = SKAction.waitForDuration(Double(2))
+        self.runAction(SKAction.repeatActionForever(SKAction.sequence([addGoldens, waitForNextGoldens])))
     }
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -142,13 +149,36 @@ class RunScene: SKScene {
     
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        var removesGoldens: NSMutableArray = []
+        for golden in goldens{
+            if(CGRectIntersectsRect(hero.frame, golden.frame)){
+                removesGoldens.addObject(golden)
+                addScore += 3
+                
+                var bonus = SKSpriteNode(imageNamed: "bonus")
+                bonus.xScale = 0.7
+                bonus.yScale = 0.7
+                bonus.position = CGPointMake(CGRectGetMidX(golden.frame), CGRectGetMidY(golden.frame))
+                self.addChild(bonus)
+                let zoom = SKAction.scaleTo(1.5, duration: 1)
+                let done = SKAction.runBlock({
+                    bonus.removeFromParent()
+                })
+                bonus.runAction(SKAction.sequence([zoom, done]))
+            }
+        }
+        for golden in removesGoldens{
+            goldens.removeObject(golden)
+            golden.removeFromParent()
+        }
+        
         var nowDate = NSDate()
         let seconds = nowDate.timeIntervalSinceDate(startDate)
-        let sec = Int(round(seconds))
+        let sec = Int(round(seconds)) + addScore
         result.text = String(sec) + "s"
+        let bios = 2
         
         var removes: NSMutableArray = []
-        let bios = 2
         for obs in obstacles{
             if(CGRectGetMidX(self.frame) < ((-self.frame.size.width / 2) + CGFloat(Float(bios)))){
                 removes.addObject(obs)
@@ -158,13 +188,13 @@ class RunScene: SKScene {
             obstacles.removeObject(obs)
             obs.removeFromParent()
         }
-        
         for obs in obstacles{
             if(CGRectIntersectsRect(hero.frame, obs.frame)){
                 lose = true
                 break
             }
         }
+        
         if(lose){
             hero.removeAllActions()
             hero.physicsBody?.velocity = CGVectorMake(0.0, 0.0)
@@ -177,7 +207,7 @@ class RunScene: SKScene {
             let moveSequence = SKAction.sequence([pause, fadeAway])
             self.runAction(moveSequence, completion: {
                 self.bgmPlayer.pause()
-                let result = ResultScene(gameScene: self.gS!)
+                let result = ResultScene(gameScene: self.gS!, score: self.result.text)
                 let doors = SKTransition.doorsOpenVerticalWithDuration(0.25)
                 self.view?.presentScene(result, transition: doors)
             })
@@ -213,6 +243,36 @@ class RunScene: SKScene {
         obstacle.runAction(SKAction.sequence([move, movedone]))
         
         obstacles.addObject(obstacle)
+    }
+    
+    func addGolden() {
+        var durationTime: NSTimeInterval = 0.5
+        let goldenTexture1 = SKTexture(imageNamed: "golden_1")
+        goldenTexture1.filteringMode = .Nearest
+        let goldenTexture2 = SKTexture(imageNamed: "golden_2")
+        goldenTexture2.filteringMode = .Nearest
+        let animation = SKAction.animateWithTextures([goldenTexture1, goldenTexture2], timePerFrame: durationTime)
+        let flip = SKAction.repeatActionForever(animation)
+        
+        var scale = CGFloat(Float(1))
+        var golden = SKSpriteNode(texture: goldenTexture1)
+        golden.xScale = scale
+        golden.yScale = scale
+        self.addChild(golden)
+        
+        var yValue = arc4random_uniform(UInt32(self.frame.height - Constant.ground.size.height * Constant.myYScale))
+            + UInt32(Constant.ground.size.height * Constant.myYScale * CGFloat(Float(1.2)))
+        var y = CGFloat(UInt32(yValue))
+        golden.position = CGPointMake(self.frame.width + golden.size.width / 2, y)
+        let move = SKAction.moveTo(CGPointMake(0, y), duration: Double(12))
+        let movedone = SKAction.runBlock({
+            self.goldens.removeObject(golden)
+            golden.removeFromParent()
+        })
+        golden.runAction(flip)
+        golden.runAction(SKAction.sequence([move, movedone]))
+        
+        goldens.addObject(golden)
     }
 }
 

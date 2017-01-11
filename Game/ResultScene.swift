@@ -12,10 +12,12 @@ import AVFoundation
 class ResultScene: SKScene {
     var bgmPlayer = AVAudioPlayer()
     var gS: GameScene?
+    var scoreStr: String?
     
-    init(gameScene: GameScene){
+    init(gameScene: GameScene, score: String){
         super.init(size: gameScene.size)
         gS = gameScene
+        scoreStr = score
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -27,7 +29,7 @@ class ResultScene: SKScene {
         self.backgroundColor = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         
         var result = SKLabelNode(fontNamed: "Chalkduster")
-        result.text = "You Lose!"
+        result.text = "You Score: " + scoreStr!
         result.name = "You Lose!"
         result.fontSize = 50
         result.fontColor = SKColor.blackColor()
