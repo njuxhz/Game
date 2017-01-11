@@ -30,6 +30,3 @@
 	* ![游戏中](https://github.com/njuxhz/Game/blob/master/MyTest/InGame.png)
 * 分数统计
 	* ![分数统计](https://github.com/njuxhz/Game/blob/master/MyTest/Score.png)
-
-## 作者
-- 徐翰章
