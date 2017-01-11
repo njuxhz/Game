@@ -23,13 +23,13 @@
 
 ##  测试截图
 * 初始场景
-![初始场景](https://github.com/njuxhz/Game/blob/master/MyTest/StartGame.png)
+	* ![初始场景](https://github.com/njuxhz/Game/blob/master/MyTest/StartGame.png)
 * 初始场景
-![初始场景](https://github.com/njuxhz/Game/blob/master/MyTest/ChangeSkin.png)
+	* ![初始场景](https://github.com/njuxhz/Game/blob/master/MyTest/ChangeSkin.png)
 * 游戏中
-![游戏中](https://github.com/njuxhz/Game/blob/master/MyTest/InGame.png)
+	* ![游戏中](https://github.com/njuxhz/Game/blob/master/MyTest/InGame.png)
 * 分数统计
-![分数统计](https://github.com/njuxhz/Game/blob/master/MyTest/Score.png)
+	* ![分数统计](https://github.com/njuxhz/Game/blob/master/MyTest/Score.png)
 
 ## 作者
 - 徐翰章
